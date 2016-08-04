@@ -28,6 +28,7 @@ app.get('/:query', function (req, res) {
 		}
 	};
 	request(options,function(error, response, body) {
+		if(error) throw error;
 		if (!error && response.statusCode == 200) {
 			var info = JSON.parse(body);
 			var to='[';

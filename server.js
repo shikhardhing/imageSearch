@@ -1,23 +1,30 @@
-var express = require('express');
-var http = require('http');
-var request = require('request');
-var mysql = require('mysql');
-var moment = require('moment');
-var app = express();
-var connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'shikhar',
-  password : 'password',
-  database : 'myDB'
-});
-connection.connect();
+var express = require('express')
+var http = require('http')
+var request = require('request')
+var moment = require('moment')
+var app = express()
+
+var mongoose = require('mongoose')
+var url = 'mongodb://localhost:27017/imgsearch'
+//var url="mongodb://shikhar97:(xyz123)@ds145315.mlab.com:45315/qwerty";
+mongoose.connect(url)
+var db = mongoose.connection
+db.on('error', console.error.bind(console, 'connection error:'))
+db.once('open', function() {
+	console.log("connected")
+})
+var schemas=mongoose.Schema({
+	query: String,
+	time:Date
+})
+var searchTable=mongoose.model('schemas',schemas)
 
 app.get('/searches',function(req,res){
-	connection.query('SELECT * FROM imgsearchtable', function(err, rows, fields) {
-		if (err) throw err;
-		res.send(rows);
-	});
-});
+	searchTable.find({},function(err,result){
+		if(err) throw err
+		res.send(result)
+	})
+})
 
 app.get('/:query', function (req, res) {
 	var options = {
@@ -37,19 +44,22 @@ app.get('/:query', function (req, res) {
 			  	if (err) throw err;
 			  	console.log('Inserted');
 			});
+			record=new searchTable ({query:req.params.query,time:moment().format()})
+			record.save(function(err){
+				if(err) throw err
+				console.log("saved")
+			})
 			for (var i = 0; i < info.value.length-1; i++) {
 				to+='{"url":"'+info.value[i].contentUrl+'","snippet":"'+info.value[i].name+'","thumbnail":"'+info.value[i].thumbnailUrl+'"},';
 			}
 			to+='{"url":"'+info.value[i].contentUrl+'","snippet":"'+info.value[i].name+'","thumbnail":"'+info.value[i].thumbnailUrl+'"}]';
 			res.json(JSON.parse(to));
 		   }
-	});
-	//res.send('Hello World');
-});
+	})
+})
 
 var server = app.listen(8081, function () {
-var host = 'localhost'
-var port = server.address().port
-console.log("Example app listening at http://%s:%s", host, port)
+	var host = 'localhost'
+	var port = server.address().port
+	console.log("Example app listening at http://%s:%s", host, port)
 });
-// HTTP/1.1

@@ -54,7 +54,7 @@ app.get('/:query', function (req, res) {
 		   }
 	})
 })
-app.set('port',(process.env.port||8081))
+app.set('port',(process.env.PORT||8001))
 var server = app.listen(app.get('port'), function () {
 	var host = 'localhost'
 	var port = server.address().port

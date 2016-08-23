@@ -5,8 +5,8 @@ var moment = require('moment')
 var app = express()
 
 var mongoose = require('mongoose')
-var url = 'mongodb://localhost:27017/imgsearch'
-//var url="mongodb://shikhar97:(xyz123)@ds145315.mlab.com:45315/qwerty";
+//var url = 'mongodb://localhost:27017/imgsearch'
+var url="mongodb://shikhar97:(xyz123)@ds145315.mlab.com:45315/qwerty";
 mongoose.connect(url)
 var db = mongoose.connection
 db.on('error', console.error.bind(console, 'connection error:'))
@@ -40,10 +40,7 @@ app.get('/:query', function (req, res) {
 			var info = JSON.parse(body);
 			var to='[';
 			console.log(info.value.length);
-			connection.query('INSERT INTO imgsearchtable VALUES("'+req.params.query+'","'+moment().format()+'");', function(err, rows, fields) {
-			  	if (err) throw err;
-			  	console.log('Inserted');
-			});
+			
 			record=new searchTable ({query:req.params.query,time:moment().format()})
 			record.save(function(err){
 				if(err) throw err

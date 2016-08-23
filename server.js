@@ -50,7 +50,7 @@ app.get('/:query', function (req, res) {
 				to+='{"url":"'+info.value[i].contentUrl+'","snippet":"'+info.value[i].name+'","thumbnail":"'+info.value[i].thumbnailUrl+'"},';
 			}
 			to+='{"url":"'+info.value[i].contentUrl+'","snippet":"'+info.value[i].name+'","thumbnail":"'+info.value[i].thumbnailUrl+'"}]';
-			res.json(JSON.parse(to));
+			res.send(to);
 		   }
 	})
 })
